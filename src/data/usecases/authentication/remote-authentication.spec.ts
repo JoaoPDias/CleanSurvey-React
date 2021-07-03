@@ -1,7 +1,7 @@
 import { RemoteAuthentication } from './remote-authentication'
 import { HttpPostClientSpy } from '@/data/test/mock-http-client'
 import { HttpStatusCode } from '@/data/protocols/http/http-response'
-import { mockAuthentication } from '@/domain/test/mock-authentication'
+import { mockAccountModel, mockAuthentication } from '@/domain/test/mock-account'
 import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error'
 import faker from 'faker'
 import { UnexpectedError } from '@/domain/errors/unexpected-error'
@@ -17,7 +17,7 @@ const makeSut = (url: string = faker.internet.url()): SutTypes => {
   const sut = new RemoteAuthentication(url, httpPostClientSpy)
   return { sut, httpPostClientSpy }
 }
-
+const HttpErrors = [HttpStatusCode.badRequest, HttpStatusCode.notFound, HttpStatusCode.serverError]
 describe('RemoteAuthentication', () => {
   test('Should call HttpPostClient with correct URL ', async () => {
     const url = faker.internet.url()
@@ -41,7 +41,7 @@ describe('RemoteAuthentication', () => {
     const promise = sut.auth(authenticationParams)
     await expect(promise).rejects.toThrow(new InvalidCredentialsError())
   })
-  const HttpErrors = [HttpStatusCode.badRequest, HttpStatusCode.notFound, HttpStatusCode.serverError]
+
   test.each(HttpErrors)('Should throw UnexpectedError if HttpPostClient returns %p', async (httpStatusCode) => {
     const authenticationParams = mockAuthentication()
     const { sut, httpPostClientSpy } = makeSut()
@@ -50,5 +50,17 @@ describe('RemoteAuthentication', () => {
     }
     const promise = sut.auth(authenticationParams)
     await expect(promise).rejects.toThrow(new UnexpectedError())
+  })
+
+  test('Should return an AccountModel if HttpPostClient returns 200 ', async () => {
+    const authenticationParams = mockAuthentication()
+    const { sut, httpPostClientSpy } = makeSut()
+    const httpResult = mockAccountModel()
+    httpPostClientSpy.response = {
+      statusCode: HttpStatusCode.ok,
+      body: httpResult
+    }
+    const account = await sut.auth(authenticationParams)
+    await expect(account).toEqual(httpResult)
   })
 })
