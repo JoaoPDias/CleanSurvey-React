@@ -17,5 +17,11 @@ coverage
 psd
 thumb
 sketch
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+.idea
 
 # End of https://www.toptal.com/developers/gitignore/api/react
