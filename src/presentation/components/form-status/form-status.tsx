@@ -1,4 +1,4 @@
-import Styles from '@/presentation/components/form-status/form-status-styles.scss'
+import Styles from './form-status-styles.scss'
 import { Spinner } from '@/presentation/components'
 import React from 'react'
 
