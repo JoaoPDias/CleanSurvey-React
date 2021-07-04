@@ -1,6 +1,6 @@
 import React from 'react'
-import Styles from '@/presentation/componentes/input/input-styles.scss'
-type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>,HTMLInputElement>
+import Styles from '@/presentation/components/input/input-styles.scss'
+type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 
 const Input: React.FC<Props> = (props: Props) => {
   return (
