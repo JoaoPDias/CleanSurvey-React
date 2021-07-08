@@ -9,5 +9,10 @@ describe('Login Component', () => {
     expect(errorWrap.childElementCount).toBe(0)
     const submitButton = getByTestId('submit') as HTMLButtonElement
     expect(submitButton.disabled).toBeTruthy()
+    const emailStatus = getByTestId('email-status')
+    expect(emailStatus.title).toBe('Campo Obrigatório')
+    expect(emailStatus.textContent).toBe('🔴')
+    const passwordStatus = getByTestId('password-status')
+    expect(passwordStatus.textContent).toBe('🔴')
   })
 })
