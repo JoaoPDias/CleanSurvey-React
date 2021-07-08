@@ -4,7 +4,6 @@ import { Footer, FormStatus, Input, LoginHeader } from '@/presentation/component
 import Context from '@/presentation/contexts/form/form-context'
 import { Validation } from '@/presentation/protocols/validation'
 import { Authentication } from '@/domain/usecases'
-import { stat } from 'fs'
 
 type Props ={
   validation: Validation
@@ -36,7 +35,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
       ...state,
       isLoading: true
     })
-    await authentication.auth({email: state.email, password: state.password})
+    await authentication.auth({ email: state.email, password: state.password })
   }
 
   return (
