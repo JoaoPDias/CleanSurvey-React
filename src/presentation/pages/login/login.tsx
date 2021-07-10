@@ -14,7 +14,7 @@ const Login: React.FC<Props> = ({
   validation,
   authentication
 }: Props) => {
-  const history=useHistory()
+  const history = useHistory()
   const [state, setState] = useState({
     isLoading: false,
     errorMessage: '',
