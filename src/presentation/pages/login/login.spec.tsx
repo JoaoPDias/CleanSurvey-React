@@ -42,7 +42,7 @@ const populateField = (sut: RenderResult, fieldTestId: string, value: string): v
   fireEvent.input(Input, { target: { value: value } })
 }
 
-const simulateStatusForField = (sut: RenderResult, fieldName: string, validationError?: string): void => {
+const validateStatusForField = (sut: RenderResult, fieldName: string, validationError?: string): void => {
   const fieldStatus = sut.getByTestId(`${fieldName}-status`)
   expect(fieldStatus.title).toBe(validationError || 'Tudo certo!')
   expect(fieldStatus.textContent).toBe(validationError ? '🔴' : '🟢')
@@ -61,8 +61,8 @@ describe('Login Component', () => {
     expect(errorWrap.childElementCount).toBe(0)
     const submitButton = sut.getByTestId('submit') as HTMLButtonElement
     expect(submitButton.disabled).toBeTruthy()
-    simulateStatusForField(sut, 'email', validationSpy.errorMessage)
-    simulateStatusForField(sut, 'password', validationSpy.errorMessage)
+    validateStatusForField(sut, 'email', validationSpy.errorMessage)
+    validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
 
   test('Should call Email Validation with correct value', () => {
@@ -91,7 +91,7 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     populateField(sut, 'email', faker.internet.email())
-    simulateStatusForField(sut, 'email', validationSpy.errorMessage)
+    validateStatusForField(sut, 'email', validationSpy.errorMessage)
   })
   test('Should show password error if Validation fails', () => {
     const {
@@ -99,17 +99,17 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     populateField(sut, 'password', faker.internet.password())
-    simulateStatusForField(sut, 'password', validationSpy.errorMessage)
+    validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
   test('Should show email valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'email', faker.internet.email())
-    simulateStatusForField(sut, 'email')
+    validateStatusForField(sut, 'email')
   })
   test('Should show password valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'password', faker.internet.password())
-    simulateStatusForField(sut, 'password')
+    validateStatusForField(sut, 'password')
   })
   test('Should enable submit button if Validation succeeds', () => {
     const { sut } = makeSut()
