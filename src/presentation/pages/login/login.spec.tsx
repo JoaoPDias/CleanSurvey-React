@@ -14,8 +14,12 @@ const makeSut = (errorMessage: string = null): SutTypes => {
   const validationSpy = new ValidationSpy()
   validationSpy.errorMessage = errorMessage
   const authenticationSpy = new AuthenticationSpy()
-  const sut = render(<Login validation = {validationSpy} authentication={authenticationSpy}/>)
-  return { sut, validationSpy, authenticationSpy }
+  const sut = render(<Login validation={validationSpy} authentication={authenticationSpy}/>)
+  return {
+    sut,
+    validationSpy,
+    authenticationSpy
+  }
 }
 
 const simulateValidSubmit = (sut: RenderResult, email: string = faker.internet.email(), password: string = faker.internet.password()): void => {
@@ -38,7 +42,10 @@ const simulateStatusForField = (sut: RenderResult, fieldName: string, validation
 describe('Login Component', () => {
   afterEach(cleanup)
   test('Should start with inital state', () => {
-    const { sut, validationSpy } = makeSut(faker.random.words())
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
     const errorWrap = sut.getByTestId('errorWrap')
     expect(errorWrap.childElementCount).toBe(0)
     const submitButton = sut.getByTestId('submit') as HTMLButtonElement
@@ -48,26 +55,38 @@ describe('Login Component', () => {
   })
 
   test('Should call Email Validation with correct value', () => {
-    const { sut, validationSpy } = makeSut(faker.random.words())
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
     const email = faker.internet.email()
     populateField(sut, 'email', email)
     expect(validationSpy.fieldName).toContain('email')
     expect(validationSpy.fieldValue).toContain(email)
   })
   test('Should call Password Validation with correct value', () => {
-    const { sut, validationSpy } = makeSut(faker.random.words())
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
     const password = faker.internet.password()
     populateField(sut, 'password', password)
     expect(validationSpy.fieldName).toContain('password')
     expect(validationSpy.fieldValue).toContain(password)
   })
   test('Should show email error if Validation fails', () => {
-    const { sut, validationSpy } = makeSut(faker.random.words())
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
     populateField(sut, 'email', faker.internet.email())
     simulateStatusForField(sut, 'email', validationSpy.errorMessage)
   })
   test('Should show password error if Validation fails', () => {
-    const { sut, validationSpy } = makeSut(faker.random.words())
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
     populateField(sut, 'password', faker.internet.password())
     simulateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
@@ -95,7 +114,10 @@ describe('Login Component', () => {
     expect(errorWrap.childElementCount).toBe(1)
   })
   test('Should call Authentication with correct values', () => {
-    const { sut, authenticationSpy } = makeSut()
+    const {
+      sut,
+      authenticationSpy
+    } = makeSut()
     const email = faker.internet.email()
     const password = faker.internet.password()
     simulateValidSubmit(sut, email, password)
@@ -103,5 +125,24 @@ describe('Login Component', () => {
       email,
       password
     })
+  })
+  test('Should call Authentication only once', () => {
+    const {
+      sut,
+      authenticationSpy
+    } = makeSut()
+    simulateValidSubmit(sut)
+    simulateValidSubmit(sut)
+    expect(authenticationSpy.callsCount).toBe(1)
+  })
+
+  test('Should not call Authentication when form is invalid', () => {
+    const {
+      sut,
+      authenticationSpy
+    } = makeSut(faker.random.words())
+    populateField(sut, 'email', faker.internet.email())
+    fireEvent.submit(sut.getByTestId('form'))
+    expect(authenticationSpy.callsCount).toBe(0)
   })
 })
