@@ -1,8 +1,9 @@
 import React from 'react'
 import * as faker from 'faker'
-import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react'
+import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react'
 import { Login } from '@/presentation/pages'
 import { AuthenticationSpy, ValidationSpy } from '@/presentation/test'
+import { InvalidCredentialsError } from '@/domain/errors'
 
 type SutTypes = {
   sut: RenderResult
@@ -131,9 +132,10 @@ describe('Login Component', () => {
       sut,
       authenticationSpy
     } = makeSut()
+    const spy = jest.spyOn(authenticationSpy, 'auth')
     simulateValidSubmit(sut)
     simulateValidSubmit(sut)
-    expect(authenticationSpy.callsCount).toBe(1)
+    expect(spy).toBeCalledTimes(1)
   })
 
   test('Should not call Authentication when form is invalid', () => {
@@ -141,8 +143,24 @@ describe('Login Component', () => {
       sut,
       authenticationSpy
     } = makeSut(faker.random.words())
+    const spy = jest.spyOn(authenticationSpy, 'auth')
     populateField(sut, 'email', faker.internet.email())
     fireEvent.submit(sut.getByTestId('form'))
-    expect(authenticationSpy.callsCount).toBe(0)
+    expect(spy).toBeCalledTimes(0)
+  })
+
+  test('Should present error when Authentication fails', async () => {
+    const {
+      sut,
+      authenticationSpy
+    } = makeSut()
+    const error = new InvalidCredentialsError()
+    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error))
+    simulateValidSubmit(sut)
+    const errorWrap = sut.getByTestId('errorWrap')
+    expect(errorWrap.childElementCount).toBe(1)
+    await waitFor(() => errorWrap)
+    const mainError = sut.getByTestId('main-error')
+    expect(mainError.textContent).toBe(error.message)
   })
 })
