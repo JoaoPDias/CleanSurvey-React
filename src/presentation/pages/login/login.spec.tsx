@@ -30,11 +30,12 @@ const makeSut = (errorMessage: string = null): SutTypes => {
   }
 }
 
-const simulateValidSubmit = (sut: RenderResult, email: string = faker.internet.email(), password: string = faker.internet.password()): void => {
+const simulateValidSubmit = async (sut: RenderResult, email: string = faker.internet.email(), password: string = faker.internet.password()): Promise<void> => {
   populateField(sut, 'email', email)
   populateField(sut, 'password', password)
-  const submitButton = sut.getByTestId('submit')
-  fireEvent.click(submitButton)
+  const form = sut.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
 }
 
 const populateField = (sut: RenderResult, fieldTestId: string, value: string): void => {
@@ -118,44 +119,43 @@ describe('Login Component', () => {
     const submitButton = sut.getByTestId('submit') as HTMLButtonElement
     expect(submitButton.disabled).toBeFalsy()
   })
-  test('Should show spinner on submit', () => {
+  test('Should show spinner on submit', async () => {
     const { sut } = makeSut()
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     const errorWrap = sut.getByTestId('errorWrap')
     expect(errorWrap.childElementCount).toBe(1)
   })
-  test('Should call Authentication with correct values', () => {
+  test('Should call Authentication with correct values', async () => {
     const {
       sut,
       authenticationSpy
     } = makeSut()
     const email = faker.internet.email()
     const password = faker.internet.password()
-    simulateValidSubmit(sut, email, password)
+    await simulateValidSubmit(sut, email, password)
     expect(authenticationSpy.params).toEqual({
       email,
       password
     })
   })
-  test('Should call Authentication only once', () => {
+  test('Should call Authentication only once', async () => {
     const {
       sut,
       authenticationSpy
     } = makeSut()
     const spy = jest.spyOn(authenticationSpy, 'auth')
-    simulateValidSubmit(sut)
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     expect(spy).toBeCalledTimes(1)
   })
 
-  test('Should not call Authentication when form is invalid', () => {
+  test('Should not call Authentication when form is invalid', async () => {
     const {
       sut,
       authenticationSpy
     } = makeSut(faker.random.words())
     const spy = jest.spyOn(authenticationSpy, 'auth')
-    populateField(sut, 'email', faker.internet.email())
-    fireEvent.submit(sut.getByTestId('form'))
+    await simulateValidSubmit(sut)
     expect(spy).toBeCalledTimes(0)
   })
 
@@ -166,10 +166,9 @@ describe('Login Component', () => {
     } = makeSut()
     const error = new InvalidCredentialsError()
     jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error))
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     const errorWrap = sut.getByTestId('errorWrap')
     expect(errorWrap.childElementCount).toBe(1)
-    await waitFor(() => errorWrap)
     const mainError = sut.getByTestId('main-error')
     expect(mainError.textContent).toBe(error.message)
   })
@@ -178,8 +177,7 @@ describe('Login Component', () => {
       sut,
       authenticationSpy
     } = makeSut()
-    simulateValidSubmit(sut)
-    await waitFor(() => sut.getByTestId('form'))
+    await simulateValidSubmit(sut)
     expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
