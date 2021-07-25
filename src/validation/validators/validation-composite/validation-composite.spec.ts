@@ -3,14 +3,14 @@ import { FieldValidationSpy } from '@/validation/validators/test/mock-field-vali
 
 describe('ValidationComposite', function () {
   test('Should ValidationComposite return error when any validation fails', () => {
-    const fieldValidationSpySuccess = new FieldValidationSpy('any_field')
     const fieldValidationSpyError = new FieldValidationSpy('any_field')
-    fieldValidationSpyError.error = new Error('any_error_message')
+    fieldValidationSpyError.error = new Error('first_error_message')
+    const fieldValidationSpySuccess = new FieldValidationSpy('any_field')
     const sut = new ValidationComposite([
-      fieldValidationSpySuccess,
-      fieldValidationSpyError
+      fieldValidationSpyError,
+      fieldValidationSpySuccess
     ])
     const error = sut.validate('any_field', 'any_value')
-    expect(error).toBe('any_error_message')
+    expect(error).toBe('first_error_message')
   })
 })
