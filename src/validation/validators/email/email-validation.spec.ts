@@ -1,7 +1,6 @@
-
-import * as faker from 'faker'
 import { EmailValidation } from '@/validation/validators'
 import { InvalidFieldError } from '@/validation/errors'
+import * as faker from 'faker'
 
 describe('Email Validation', function () {
   test('Should return error if email is invalid', () => {
