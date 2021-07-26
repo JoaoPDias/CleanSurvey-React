@@ -14,7 +14,7 @@ describe('Validation Builder', function () {
   })
   test('Should Validation Builder returns EmailValidation', () => {
     const validations = ValidationBuilder.field('any_field').email().build()
-    expect(validations).toEqual([new EmailValidation('any_field')])
+    expect(validations).toContainEqual(new EmailValidation('any_field'))
   })
   test('Should Validation Builder returns MinLengthValidation', () => {
     const validations = ValidationBuilder.field('any_field').min(5).build()
