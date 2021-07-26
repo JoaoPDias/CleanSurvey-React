@@ -1,4 +1,4 @@
-import { ValidationComposite } from '@/validation/validators/validation-composite/validation-composite'
+import { ValidationComposite } from '@/validation/validators'
 import { FieldValidationSpy } from '@/validation/validators/test/mock-field-validation'
 import * as faker from 'faker'
 
