@@ -4,7 +4,7 @@ import { Footer, FormStatus, Input, LoginHeader } from '@/presentation/component
 import { Link, useHistory } from 'react-router-dom'
 import Context from '@/presentation/contexts/form/form-context'
 import { Validation } from '@/presentation/protocols/validation'
-import { Authentication } from '@/domain/usecases'
+import { Authentication } from '@/domain/usecases/authentication'
 
 type Props = {
   validation: Validation
