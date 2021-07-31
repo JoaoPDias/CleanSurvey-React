@@ -25,3 +25,4 @@ sketch
 .idea
 # End of https://www.toptal.com/developers/gitignore/api/react
 /public/js
+package-lock.json
