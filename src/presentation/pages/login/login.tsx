@@ -4,15 +4,17 @@ import { Footer, FormStatus, Input, LoginHeader } from '@/presentation/component
 import { Link, useHistory } from 'react-router-dom'
 import Context from '@/presentation/contexts/form/form-context'
 import { Validation } from '@/presentation/protocols/validation'
-import { Authentication } from '@/domain/usecases/authentication'
+import { Authentication, SaveAccessToken } from '@/domain/usecases'
 
 type Props = {
   validation: Validation
   authentication: Authentication
+  saveAccessToken: SaveAccessToken
 }
 const Login: React.FC<Props> = ({
   validation,
-  authentication
+  authentication,
+  saveAccessToken
 }: Props) => {
   const history = useHistory()
   const [state, setState] = useState({
@@ -48,7 +50,7 @@ const Login: React.FC<Props> = ({
         email: state.email,
         password: state.password
       })
-      localStorage.setItem('accessToken', account.accessToken)
+      await saveAccessToken.save(account.accessToken)
       history.replace('/')
     } catch (error) {
       setState({
@@ -67,14 +69,14 @@ const Login: React.FC<Props> = ({
         state,
         setState
       }}>
-        <form data-testid ="form" className={Styles.form} onSubmit={handleSubmit}>
+        <form data-testid="form" className={Styles.form} onSubmit={handleSubmit}>
           <h2>Login</h2>
           <Input type="email" name="email" placeholder={'Digite seu e-mail'}/>
           <Input type="password" name="password" placeholder={'Digite sua senha'}/>
           <button data-testid="submit" className={Styles.submit} disabled={!!state.emailError || !!state.passwordError}
                   type={'submit'}>Entrar
           </button>
-          <Link to='/signup' data-testid='signup' className={Styles.link}>Criar Conta</Link>
+          <Link to="/signup" data-testid="signup" className={Styles.link}>Criar Conta</Link>
           <FormStatus/>
         </form>
       </Context.Provider>
