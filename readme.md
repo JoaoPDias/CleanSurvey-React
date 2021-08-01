@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/JoaoPDias/CleanSurvey-React.svg?branch=master)](https://travis-ci.com/JoaoPDias/CleanSurvey-React)
-
+[![Coverage Status](https://coveralls.io/repos/github/JoaoPDias/CleanSurvey-React/badge.svg?branch=master)](https://coveralls.io/github/JoaoPDias/CleanSurvey-React?branch=master)
 # **4Dev React - Enquetes para Programadores**
 
 ## [**Link para o curso completo**](https://www.udemy.com/course/react-com-mango/?referralCode=552F88858EAE76346C8B)
