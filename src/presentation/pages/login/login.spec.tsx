@@ -3,30 +3,35 @@ import * as faker from 'faker'
 import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
-import 'jest-localstorage-mock'
 import { Login } from '@/presentation/pages'
-import { AuthenticationSpy, ValidationSpy } from '@/presentation/test'
+import { AuthenticationSpy, SaveAccessTokenMock, ValidationSpy } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
 
 type SutTypes = {
   sut: RenderResult
   validationSpy: ValidationSpy
   authenticationSpy: AuthenticationSpy
+  saveAccessTokenMock: SaveAccessTokenMock
 }
 const history = createMemoryHistory({ initialEntries: ['/login'] })
 const makeSut = (errorMessage: string = null): SutTypes => {
   const validationSpy = new ValidationSpy()
   validationSpy.errorMessage = errorMessage
   const authenticationSpy = new AuthenticationSpy()
+  const saveAccessTokenMock = new SaveAccessTokenMock()
   const sut = render(
     <Router history={history}>
-      <Login validation={validationSpy} authentication={authenticationSpy}/>
+      <Login validation={validationSpy}
+             authentication={authenticationSpy}
+             saveAccessToken={saveAccessTokenMock}
+      />
     </Router>
   )
   return {
     sut,
     validationSpy,
-    authenticationSpy
+    authenticationSpy,
+    saveAccessTokenMock
   }
 }
 
@@ -61,10 +66,7 @@ const validateButtonState = (sut: RenderResult, testId: string, isDisabled: bool
 }
 describe('Login Component', () => {
   afterEach(cleanup)
-  beforeEach(() => {
-    localStorage.clear()
-  })
-  test('Should start with inital state', () => {
+  test('Should start with initial state', () => {
     const {
       sut,
       validationSpy
@@ -177,13 +179,14 @@ describe('Login Component', () => {
     validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
     validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
   })
-  test('Should add Access Token in Local Storage when Authentication succeeds', async () => {
+  test('Should call SaveAccessToken when Authentication succeeds', async () => {
     const {
       sut,
-      authenticationSpy
+      authenticationSpy,
+      saveAccessTokenMock
     } = makeSut()
     await simulateValidSubmit(sut)
-    expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
+    expect(saveAccessTokenMock.accessToken).toBe(authenticationSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
   })
