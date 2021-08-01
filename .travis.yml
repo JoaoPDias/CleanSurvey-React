@@ -3,7 +3,7 @@ node_js:
   - 14
 script:
   - eslint 'src/**'
-  - npm run test:ci
+  - npm run test:coveralls
 cache:
   directories:
     - "node_modules"
