@@ -13,5 +13,7 @@ describe('LocalStorageAdapter', function () {
     const value = faker.random.word()
     await sut.set(key, value)
     expect(localStorage.setItem).toHaveBeenCalledWith(key, value)
+    expect(localStorage.__STORE__[key]).toBe(value)
+    expect(Object.keys(localStorage.__STORE__).length).toBe(1)
   })
 })
