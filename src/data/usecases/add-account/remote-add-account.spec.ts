@@ -1,12 +1,11 @@
 import * as faker from 'faker'
 import { HttpPostClientSpy } from '@/data/test'
 import { AuthenticationParams } from '@/domain/usecases'
-import { AccountModel } from '@/domain/model/account-model'
 import { mockAccountModel, mockAddAccountParams } from '@/domain/test'
 import { RemoteAddAccount } from '@/data/usecases/add-account/remote-add-account'
 import { HttpStatusCode } from '@/data/protocols/http'
-import { EmailInUseError } from '@/domain/errors/email-in-use-error'
-import { UnexpectedError } from '@/domain/errors'
+import { EmailInUseError, UnexpectedError } from '@/domain/errors'
+import { AccountModel } from '@/domain/model'
 
 type SutTypes = {
   sut: RemoteAddAccount
@@ -53,7 +52,7 @@ describe('RemoteAddAccount', function () {
     await expect(promise).rejects.toThrow(new EmailInUseError())
   })
 
-  test.each(HttpErrors)('Should throw UnexpectedError if HttpPostClient returns %p', async (httpStatusCode) => {
+  test.each(HttpErrors)('should throw UnexpectedError if HttpPostClient returns %p', async (httpStatusCode) => {
     const addAccountParams = mockAddAccountParams()
     const {
       sut,

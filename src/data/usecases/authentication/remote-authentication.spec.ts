@@ -41,7 +41,7 @@ describe('RemoteAuthentication', () => {
     await expect(promise).rejects.toThrow(new InvalidCredentialsError())
   })
 
-  test.each(HttpErrors)('Should throw UnexpectedError if HttpPostClient returns %p', async (httpStatusCode) => {
+  test.each(HttpErrors)('should throw UnexpectedError if HttpPostClient returns %p', async (httpStatusCode) => {
     const authenticationParams = mockAuthenticationParams()
     const { sut, httpPostClientSpy } = makeSut()
     httpPostClientSpy.response = {
