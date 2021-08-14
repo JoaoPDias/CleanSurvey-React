@@ -4,7 +4,7 @@ import { Input } from '@/presentation/components'
 import Context from '@/presentation/contexts/form/form-context'
 
 describe('Input Component', function () {
-  test('Should Input Component begins with readonly', () => {
+  test('should Input Component begins with readonly', () => {
     const { getByTestId } = render(
       <Context.Provider value={{ state: {} }}>
         <Input name="field"/>)
@@ -12,7 +12,7 @@ describe('Input Component', function () {
     const input = getByTestId('field') as HTMLInputElement
     expect(input.readOnly).toBe(true)
   })
-  test('Should Input Component on focus be enable', () => {
+  test('should Input Component on focus be enable', () => {
     const { getByTestId } = render(
       <Context.Provider value={{ state: {} }}>
         <Input name="field"/>)

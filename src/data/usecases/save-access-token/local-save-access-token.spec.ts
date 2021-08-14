@@ -16,7 +16,7 @@ const makeSut = (): SutTypes => {
   }
 }
 describe('LocalSaveAccessToken', function () {
-  test('Should LocalSaveAccessToken', async () => {
+  test('should LocalSaveAccessToken', async () => {
     const {
       sut,
       setStorageMock
@@ -26,7 +26,7 @@ describe('LocalSaveAccessToken', function () {
     expect(setStorageMock.key).toBe('accessToken')
     expect(setStorageMock.value).toBe(accessToken)
   })
-  test('Should LocalSaveAccessToken', async () => {
+  test('should LocalSaveAccessToken', async () => {
     const {
       sut,
       setStorageMock

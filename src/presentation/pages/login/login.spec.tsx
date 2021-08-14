@@ -66,7 +66,7 @@ const validateButtonState = (sut: RenderResult, testId: string, isDisabled: bool
 }
 describe('Login Component', () => {
   afterEach(cleanup)
-  test('Should start with initial state', () => {
+  test('should start with initial state', () => {
     const {
       sut,
       validationSpy
@@ -77,7 +77,7 @@ describe('Login Component', () => {
     validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
 
-  test('Should call Email Validation with correct value', () => {
+  test('should call Email Validation with correct value', () => {
     const {
       sut,
       validationSpy
@@ -87,7 +87,7 @@ describe('Login Component', () => {
     expect(validationSpy.fieldName).toContain('email')
     expect(validationSpy.fieldValue).toContain(email)
   })
-  test('Should call Password Validation with correct value', () => {
+  test('should call Password Validation with correct value', () => {
     const {
       sut,
       validationSpy
@@ -97,7 +97,7 @@ describe('Login Component', () => {
     expect(validationSpy.fieldName).toContain('password')
     expect(validationSpy.fieldValue).toContain(password)
   })
-  test('Should show email error if Validation fails', () => {
+  test('should show email error if Validation fails', () => {
     const {
       sut,
       validationSpy
@@ -105,7 +105,7 @@ describe('Login Component', () => {
     populateField(sut, 'email', faker.internet.email())
     validateStatusForField(sut, 'email', validationSpy.errorMessage)
   })
-  test('Should show password error if Validation fails', () => {
+  test('should show password error if Validation fails', () => {
     const {
       sut,
       validationSpy
@@ -113,28 +113,28 @@ describe('Login Component', () => {
     populateField(sut, 'password', faker.internet.password())
     validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
-  test('Should show email valid signal if Validation succeeds', () => {
+  test('should show email valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'email', faker.internet.email())
     validateStatusForField(sut, 'email')
   })
-  test('Should show password valid signal if Validation succeeds', () => {
+  test('should show password valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'password', faker.internet.password())
     validateStatusForField(sut, 'password')
   })
-  test('Should enable submit button if Validation succeeds', () => {
+  test('should enable submit button if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'email', faker.internet.email())
     populateField(sut, 'password', faker.internet.password())
     validateButtonState(sut, 'submit', false)
   })
-  test('Should show spinner on submit', async () => {
+  test('should show spinner on submit', async () => {
     const { sut } = makeSut()
     await simulateValidSubmit(sut)
     validateIfElementExists(sut, 'spinner')
   })
-  test('Should call Authentication with correct values', async () => {
+  test('should call Authentication with correct values', async () => {
     const {
       sut,
       authenticationSpy
@@ -147,7 +147,7 @@ describe('Login Component', () => {
       password
     })
   })
-  test('Should call Authentication only once', async () => {
+  test('should call Authentication only once', async () => {
     const {
       sut,
       authenticationSpy
@@ -158,7 +158,7 @@ describe('Login Component', () => {
     expect(spy).toBeCalledTimes(1)
   })
 
-  test('Should not call Authentication when form is invalid', async () => {
+  test('should not call Authentication when form is invalid', async () => {
     const {
       sut,
       authenticationSpy
@@ -168,7 +168,7 @@ describe('Login Component', () => {
     expect(spy).toBeCalledTimes(0)
   })
 
-  test('Should present error when Authentication fails', async () => {
+  test('should present error when Authentication fails', async () => {
     const {
       sut,
       authenticationSpy
@@ -179,7 +179,7 @@ describe('Login Component', () => {
     validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
     validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
   })
-  test('Should call SaveAccessToken when Authentication succeeds', async () => {
+  test('should call SaveAccessToken when Authentication succeeds', async () => {
     const {
       sut,
       authenticationSpy,
@@ -190,7 +190,7 @@ describe('Login Component', () => {
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
   })
-  test('Should present error when SaveAccessToken fails', async () => {
+  test('should present error when SaveAccessToken fails', async () => {
     const {
       sut,
       saveAccessTokenMock
@@ -201,7 +201,7 @@ describe('Login Component', () => {
     validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
     validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
   })
-  test('Should go to signup page', async () => {
+  test('should go to signup page', async () => {
     const {
       sut
     } = makeSut()

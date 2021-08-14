@@ -2,8 +2,10 @@ import * as faker from 'faker'
 import { HttpPostClientSpy } from '@/data/test'
 import { AuthenticationParams } from '@/domain/usecases'
 import { AccountModel } from '@/domain/model/account-model'
-import { mockAddAccountParams, mockAuthenticationParams } from '@/domain/test'
+import { mockAddAccountParams } from '@/domain/test'
 import { RemoteAddAccount } from '@/data/usecases/add-account/remote-add-account'
+import { HttpStatusCode } from '@/data/protocols/http'
+import { EmailInUseError } from '@/domain/errors/email-in-use-error'
 
 type SutTypes = {
   sut: RemoteAddAccount
@@ -19,7 +21,7 @@ const makeSut = (url: string = faker.internet.url()): SutTypes => {
   }
 }
 describe('RemoteAddAccount', function () {
-  test('Should RemoteAddAccount calls HttpPostClient with correct URL', async () => {
+  test('should RemoteAddAccount calls HttpPostClient with correct URL', async () => {
     const url = faker.internet.url()
     const {
       sut,
@@ -28,16 +30,19 @@ describe('RemoteAddAccount', function () {
     await sut.add(mockAddAccountParams())
     expect(httpPostClientSpy.url).toBe(url)
   })
-  test('Should RemoteAddAccount calls HttpPostClient with correct body ', async () => {
+  test('should RemoteAddAccount calls HttpPostClient with correct body ', async () => {
     const addAccountParams = mockAddAccountParams()
     const { sut, httpPostClientSpy } = makeSut()
     await sut.add(addAccountParams)
     expect(httpPostClientSpy.body).toEqual(addAccountParams)
   })
-  test('Should RemoteAddAccount calls HttpPostClient with correct body ', async () => {
+  test('should RemoteAddAccount throws EmailInUseError when HttpPostClient returns 403 ', async () => {
     const addAccountParams = mockAddAccountParams()
     const { sut, httpPostClientSpy } = makeSut()
-    await sut.add(addAccountParams)
-    expect(httpPostClientSpy.body).toEqual(addAccountParams)
+    httpPostClientSpy.response = {
+      statusCode: HttpStatusCode.forbidden
+    }
+    const promise = sut.add(addAccountParams)
+    await expect(promise).rejects.toThrow(new EmailInUseError())
   })
 })

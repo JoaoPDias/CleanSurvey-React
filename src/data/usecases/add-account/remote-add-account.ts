@@ -1,6 +1,7 @@
-import { HttpPostClient } from '@/data/protocols/http'
+import { HttpPostClient, HttpStatusCode } from '@/data/protocols/http'
 import { AddAccountParams } from '@/domain/usecases'
 import { AccountModel } from '@/domain/model/account-model'
+import { EmailInUseError } from '@/domain/errors/email-in-use-error'
 
 export class RemoteAddAccount {
   constructor (private readonly url: string, private readonly httpPostClient: HttpPostClient<AddAccountParams, AccountModel>) {
@@ -11,6 +12,9 @@ export class RemoteAddAccount {
       url: this.url,
       body: addAccountParams
     })
+    switch (httpResponse.statusCode) {
+      case HttpStatusCode.forbidden:throw new EmailInUseError()
+    }
     return null
   }
 }

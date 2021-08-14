@@ -20,7 +20,7 @@ const makeSut = (fieldName: string): SutTypes => {
   }
 }
 describe('ValidationComposite', function () {
-  test('Should ValidationComposite returns error when any validation fails', () => {
+  test('should ValidationComposite returns error when any validation fails', () => {
     const fieldName = faker.database.column()
     const {
       sut,
@@ -31,7 +31,7 @@ describe('ValidationComposite', function () {
     const error = sut.validate(fieldName, faker.random.word())
     expect(error).toBe(errorMessage)
   })
-  test('Should ValidationComposite returns falsy when all validations succeeds', () => {
+  test('should ValidationComposite returns falsy when all validations succeeds', () => {
     const fieldName = faker.database.column()
     const { sut } = makeSut(fieldName)
     const error = sut.validate(fieldName, 'any_value')

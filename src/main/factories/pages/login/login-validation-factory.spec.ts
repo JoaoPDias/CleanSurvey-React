@@ -2,7 +2,7 @@ import { makeLoginValidation } from '@/main/factories/pages/login/login-validati
 import { ValidationBuilder, ValidationComposite } from '@/validation/validators'
 
 describe('LoginValidationFactory', function () {
-  test('Should LoginValidationFactory returns correct validations', () => {
+  test('should LoginValidationFactory returns correct validations', () => {
     const composite = makeLoginValidation()
     expect(composite).toEqual(ValidationComposite.build([
       ...ValidationBuilder.field('email').required().email().build(),
