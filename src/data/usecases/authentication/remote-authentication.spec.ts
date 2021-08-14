@@ -31,6 +31,7 @@ describe('RemoteAuthentication', () => {
     await sut.auth(authenticationParams)
     expect(httpPostClientSpy.body).toEqual(authenticationParams)
   })
+
   test('should throw InvalidCredentialsError if HttpPostClient returns 401 ', async () => {
     const authenticationParams = mockAuthenticationParams()
     const { sut, httpPostClientSpy } = makeSut()
