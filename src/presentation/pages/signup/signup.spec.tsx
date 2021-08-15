@@ -1,4 +1,4 @@
-import { cleanup, render, RenderResult } from '@testing-library/react'
+import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react'
 import { Signup } from '@/presentation/pages'
 import React from 'react'
 import { AddAccountSpy, Helper, SaveAccessTokenMock, ValidationSpy } from '@/presentation/test'
@@ -256,5 +256,14 @@ describe('Signup Component', function () {
     await Helper.simulateValidSubmit(sut, fields)
     Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
     Helper.validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
+  })
+  test('should Signup Component redirect to login page when click in Login Button', async () => {
+    const {
+      sut
+    } = makeSut()
+    const login = sut.getByTestId('login-link')
+    fireEvent.click(login)
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/login')
   })
 })
