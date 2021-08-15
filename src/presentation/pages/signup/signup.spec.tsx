@@ -124,4 +124,10 @@ describe('Signup Component', function () {
     Helper.populateField(sut, 'email', faker.internet.email())
     Helper.validateStatusForField(sut, 'email')
   })
+
+  test('should Signup Component shows password valid signal when Validation succeeds', () => {
+    const { sut } = makeSut()
+    Helper.populateField(sut, 'password', faker.internet.password())
+    Helper.validateStatusForField(sut, 'password')
+  })
 })
