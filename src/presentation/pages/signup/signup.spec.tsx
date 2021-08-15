@@ -30,7 +30,7 @@ describe('Signup Component', function () {
     Helper.validateStatusForField(sut, 'name', validationError)
     Helper.validateStatusForField(sut, 'email', validationError)
     Helper.validateStatusForField(sut, 'password', validationError)
-    Helper.validateStatusForField(sut, 'passwordConfirmation', 'Campo obrigatório')
+    Helper.validateStatusForField(sut, 'passwordConfirmation', validationError)
   })
 
   test('should Signup Component shows name error when Validation fails', () => {
@@ -91,5 +91,31 @@ describe('Signup Component', function () {
     } = makeSut(faker.random.words())
     Helper.populateField(sut, 'password', faker.internet.password())
     Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
+  })
+
+  test('should Signup Component calls PasswordConfirmation Validation with correct value', () => {
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
+    const password = faker.internet.password()
+    Helper.populateField(sut, 'passwordConfirmation', password)
+    expect(validationSpy.fieldName).toContain('passwordConfirmation')
+    expect(validationSpy.fieldValue).toContain(password)
+  })
+
+  test('should Signup Component shows passwordConfirmation error when Validation fails', () => {
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
+    Helper.populateField(sut, 'passwordConfirmation', faker.internet.password())
+    Helper.validateStatusForField(sut, 'passwordConfirmation', validationSpy.errorMessage)
+  })
+
+  test('should Signup Component shows name valid signal when Validation succeeds', () => {
+    const { sut } = makeSut()
+    Helper.populateField(sut, 'name', faker.name.findName())
+    Helper.validateStatusForField(sut, 'name')
   })
 })
