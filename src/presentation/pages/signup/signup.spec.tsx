@@ -37,7 +37,7 @@ describe('Signup Component', function () {
     fields.set('passwordConfirmation', password)
   })
   afterEach(cleanup)
-  test('should Signup Component renders with correct initial state', () => {
+  test('should Signup Component render with correct initial state', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut(validationError)
     Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 0)
@@ -48,7 +48,7 @@ describe('Signup Component', function () {
     Helper.validateStatusForField(sut, 'passwordConfirmation', validationError)
   })
 
-  test('should Signup Component shows name error when Validation fails', () => {
+  test('should Signup Component show name error when Validation fails', () => {
     const {
       sut,
       validationSpy
@@ -57,7 +57,7 @@ describe('Signup Component', function () {
     Helper.validateStatusForField(sut, 'name', validationSpy.errorMessage)
   })
 
-  test('should Signup Component calls Name Validation with correct value', () => {
+  test('should Signup Component call Name Validation with correct value', () => {
     const {
       sut,
       validationSpy
@@ -68,7 +68,7 @@ describe('Signup Component', function () {
     expect(validationSpy.fieldValue).toContain(name)
   })
 
-  test('should Signup Component shows email error when Validation fails', () => {
+  test('should Signup Component show email error when Validation fails', () => {
     const {
       sut,
       validationSpy
@@ -77,7 +77,7 @@ describe('Signup Component', function () {
     Helper.validateStatusForField(sut, 'email', validationSpy.errorMessage)
   })
 
-  test('should Signup Component calls Email Validation with correct value', () => {
+  test('should Signup Component call Email Validation with correct value', () => {
     const {
       sut,
       validationSpy
@@ -88,7 +88,7 @@ describe('Signup Component', function () {
     expect(validationSpy.fieldValue).toContain(email)
   })
 
-  test('should Signup Component calls Password Validation with correct value', () => {
+  test('should Signup Component call Password Validation with correct value', () => {
     const {
       sut,
       validationSpy
@@ -99,7 +99,7 @@ describe('Signup Component', function () {
     expect(validationSpy.fieldValue).toContain(password)
   })
 
-  test('should Signup Component shows password error when Validation fails', () => {
+  test('should Signup Component show password error when Validation fails', () => {
     const {
       sut,
       validationSpy
@@ -108,7 +108,7 @@ describe('Signup Component', function () {
     Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
 
-  test('should Signup Component calls PasswordConfirmation Validation with correct value', () => {
+  test('should Signup Component call PasswordConfirmation Validation with correct value', () => {
     const {
       sut,
       validationSpy
@@ -119,7 +119,7 @@ describe('Signup Component', function () {
     expect(validationSpy.fieldValue).toContain(password)
   })
 
-  test('should Signup Component shows passwordConfirmation error when Validation fails', () => {
+  test('should Signup Component show passwordConfirmation error when Validation fails', () => {
     const {
       sut,
       validationSpy
@@ -128,30 +128,30 @@ describe('Signup Component', function () {
     Helper.validateStatusForField(sut, 'passwordConfirmation', validationSpy.errorMessage)
   })
 
-  test('should Signup Component shows name valid signal when Validation succeeds', () => {
+  test('should Signup Component show name valid signal when Validation succeeds', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'name', faker.name.findName())
     Helper.validateStatusForField(sut, 'name')
   })
 
-  test('should Signup Component shows email valid signal when Validation succeeds', () => {
+  test('should Signup Component show email valid signal when Validation succeeds', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'email', faker.internet.email())
     Helper.validateStatusForField(sut, 'email')
   })
 
-  test('should Signup Component shows password valid signal when Validation succeeds', () => {
+  test('should Signup Component show password valid signal when Validation succeeds', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'password', faker.internet.password())
     Helper.validateStatusForField(sut, 'password')
   })
 
-  test('should Signup Component shows passwordConfirmation valid signal when Validation succeeds', () => {
+  test('should Signup Component show passwordConfirmation valid signal when Validation succeeds', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'passwordConfirmation', faker.internet.password())
     Helper.validateStatusForField(sut, 'passwordConfirmation')
   })
-  test('should Signup Component enables submit button if Validation succeeds', () => {
+  test('should Signup Component enable submit button if Validation succeeds', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'name', fields.get('name'))
     Helper.populateField(sut, 'email', fields.get('email'))
@@ -160,13 +160,13 @@ describe('Signup Component', function () {
     Helper.validateButtonState(sut, 'submit', false)
   })
 
-  test('should Signup Component shows spinner on submit', async () => {
+  test('should Signup Component show spinner on submit', async () => {
     const { sut } = makeSut()
     await Helper.simulateValidSubmit(sut, fields)
     Helper.validateIfElementExists(sut, 'spinner')
   })
 
-  test('should Signup Component calls AddAccount with correct values', async () => {
+  test('should Signup Component call AddAccount with correct values', async () => {
     const {
       sut,
       addAccountSpy
@@ -190,7 +190,7 @@ describe('Signup Component', function () {
     })
   })
 
-  test('should Signup Component calls AddAccount only once', async () => {
+  test('should Signup Component call AddAccount only once', async () => {
     const {
       sut,
       addAccountSpy
@@ -199,5 +199,15 @@ describe('Signup Component', function () {
     await Helper.simulateValidSubmit(sut, fields)
     await Helper.simulateValidSubmit(sut, fields)
     expect(spy).toBeCalledTimes(1)
+  })
+
+  test('should Signup Component not call AddAccount when form is invalid', async () => {
+    const {
+      sut,
+      addAccountSpy
+    } = makeSut(faker.random.words())
+    const spy = jest.spyOn(addAccountSpy, 'add')
+    await Helper.simulateValidSubmit(sut, fields)
+    expect(spy).toBeCalledTimes(0)
   })
 })
