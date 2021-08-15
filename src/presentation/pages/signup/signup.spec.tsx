@@ -118,4 +118,10 @@ describe('Signup Component', function () {
     Helper.populateField(sut, 'name', faker.name.findName())
     Helper.validateStatusForField(sut, 'name')
   })
+
+  test('should Signup Component shows email valid signal when Validation succeeds', () => {
+    const { sut } = makeSut()
+    Helper.populateField(sut, 'email', faker.internet.email())
+    Helper.validateStatusForField(sut, 'email')
+  })
 })
