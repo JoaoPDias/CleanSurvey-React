@@ -1,27 +1,34 @@
 import { cleanup, render, RenderResult } from '@testing-library/react'
 import { Signup } from '@/presentation/pages'
 import React from 'react'
-import { Helper, ValidationSpy } from '@/presentation/test'
+import { AddAccountSpy, Helper, ValidationSpy } from '@/presentation/test'
 import faker from 'faker'
 
 type SutTypes = {
   sut: RenderResult
   validationSpy: ValidationSpy
+  addAccountSpy: AddAccountSpy
 }
+
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
+  const addAccountSpy = new AddAccountSpy()
   validationSpy.errorMessage = validationError
   const sut = render(
-    <Signup validation={validationSpy}/>
+    <Signup
+      validation={validationSpy}
+      addAccount={addAccountSpy}
+    />
   )
   return {
     sut,
-    validationSpy
+    validationSpy,
+    addAccountSpy
   }
 }
 
+const fields = new Map()
 describe('Signup Component', function () {
-  const fields = new Map()
   beforeEach(() => {
     const password = faker.internet.password()
     fields.set('name', faker.name.findName())
@@ -147,9 +154,9 @@ describe('Signup Component', function () {
   test('should Signup Component enables submit button if Validation succeeds', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'name', fields.get('name'))
-    Helper.populateField(sut, 'email', fields.get('name'))
-    Helper.populateField(sut, 'password', fields.get('name'))
-    Helper.populateField(sut, 'passwordConfirmation', fields.get('name'))
+    Helper.populateField(sut, 'email', fields.get('email'))
+    Helper.populateField(sut, 'password', fields.get('password'))
+    Helper.populateField(sut, 'passwordConfirmation', fields.get('passwordConfirmation'))
     Helper.validateButtonState(sut, 'submit', false)
   })
 
@@ -157,5 +164,29 @@ describe('Signup Component', function () {
     const { sut } = makeSut()
     await Helper.simulateValidSubmit(sut, fields)
     Helper.validateIfElementExists(sut, 'spinner')
+  })
+
+  test('should Signup Component calls AddAccount with correct values', async () => {
+    const {
+      sut,
+      addAccountSpy
+    } = makeSut()
+    const name = fields.get('name')
+    const email = fields.get('email')
+    const password = fields.get('password')
+    const passwordConfirmation = fields.get('passwordConfirmation')
+
+    Helper.populateField(sut, 'name', name)
+    Helper.populateField(sut, 'email', email)
+    Helper.populateField(sut, 'password', password)
+    Helper.populateField(sut, 'passwordConfirmation', passwordConfirmation)
+    await Helper.simulateValidSubmit(sut, fields)
+
+    expect(addAccountSpy.params).toEqual({
+      name,
+      email,
+      password,
+      passwordConfirmation
+    })
   })
 })
