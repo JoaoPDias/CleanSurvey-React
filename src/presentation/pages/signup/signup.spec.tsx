@@ -1,30 +1,40 @@
 import { cleanup, render, RenderResult } from '@testing-library/react'
 import { Signup } from '@/presentation/pages'
 import React from 'react'
-import { AddAccountSpy, Helper, ValidationSpy } from '@/presentation/test'
+import { AddAccountSpy, Helper, SaveAccessTokenMock, ValidationSpy } from '@/presentation/test'
 import faker from 'faker'
 import { EmailInUseError } from '@/domain/errors'
+import { createMemoryHistory } from 'history'
+import { Router } from 'react-router-dom'
 
 type SutTypes = {
   sut: RenderResult
   validationSpy: ValidationSpy
   addAccountSpy: AddAccountSpy
+  saveAccessTokenMock: SaveAccessTokenMock
 }
 
+createMemoryHistory()
+const history = createMemoryHistory({ initialEntries: ['/login'] })
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
   const addAccountSpy = new AddAccountSpy()
+  const saveAccessTokenMock = new SaveAccessTokenMock()
   validationSpy.errorMessage = validationError
   const sut = render(
-    <Signup
-      validation={validationSpy}
-      addAccount={addAccountSpy}
-    />
+    <Router history={history}>
+      <Signup
+        validation={validationSpy}
+        addAccount={addAccountSpy}
+        saveAccessToken={saveAccessTokenMock}
+      />
+    </Router>
   )
   return {
     sut,
     validationSpy,
-    addAccountSpy
+    addAccountSpy,
+    saveAccessTokenMock
   }
 }
 
@@ -222,5 +232,17 @@ describe('Signup Component', function () {
     await Helper.simulateValidSubmit(sut, fields)
     Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
     Helper.validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
+  })
+
+  test('should Signup Component call SaveAccessToken when AddAccount succeeds', async () => {
+    const {
+      sut,
+      addAccountSpy,
+      saveAccessTokenMock
+    } = makeSut()
+    await Helper.simulateValidSubmit(sut, fields)
+    expect(saveAccessTokenMock.accessToken).toBe(addAccountSpy.account.accessToken)
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/')
   })
 })
