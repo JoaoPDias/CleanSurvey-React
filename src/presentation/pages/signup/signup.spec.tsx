@@ -3,6 +3,7 @@ import { Signup } from '@/presentation/pages'
 import React from 'react'
 import { AddAccountSpy, Helper, ValidationSpy } from '@/presentation/test'
 import faker from 'faker'
+import { EmailInUseError } from '@/domain/errors'
 
 type SutTypes = {
   sut: RenderResult
@@ -209,5 +210,17 @@ describe('Signup Component', function () {
     const spy = jest.spyOn(addAccountSpy, 'add')
     await Helper.simulateValidSubmit(sut, fields)
     expect(spy).toBeCalledTimes(0)
+  })
+
+  test('should Signup Component present error when AddAccount fails', async () => {
+    const {
+      sut,
+      addAccountSpy
+    } = makeSut()
+    const error = new EmailInUseError()
+    jest.spyOn(addAccountSpy, 'add').mockReturnValueOnce(Promise.reject(error))
+    await Helper.simulateValidSubmit(sut, fields)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
   })
 })
