@@ -42,16 +42,11 @@ const makeSut = (errorMessage: string = null): SutTypes => {
 }
 
 const simulateValidSubmit = async (sut: RenderResult, email: string = faker.internet.email(), password: string = faker.internet.password()): Promise<void> => {
-  populateField(sut, 'email', email)
-  populateField(sut, 'password', password)
+  Helper.populateField(sut, 'email', email)
+  Helper.populateField(sut, 'password', password)
   const form = sut.getByTestId('form')
   fireEvent.submit(form)
   await waitFor(() => form)
-}
-
-const populateField = (sut: RenderResult, fieldTestId: string, value: string): void => {
-  const Input = sut.getByTestId(fieldTestId)
-  fireEvent.input(Input, { target: { value: value } })
 }
 
 const validateIfElementExists = (sut: RenderResult, testId: string): void => {
@@ -78,7 +73,7 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     const email = faker.internet.email()
-    populateField(sut, 'email', email)
+    Helper.populateField(sut, 'email', email)
     expect(validationSpy.fieldName).toContain('email')
     expect(validationSpy.fieldValue).toContain(email)
   })
@@ -88,7 +83,7 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     const password = faker.internet.password()
-    populateField(sut, 'password', password)
+    Helper.populateField(sut, 'password', password)
     expect(validationSpy.fieldName).toContain('password')
     expect(validationSpy.fieldValue).toContain(password)
   })
@@ -97,7 +92,7 @@ describe('Login Component', () => {
       sut,
       validationSpy
     } = makeSut(faker.random.words())
-    populateField(sut, 'email', faker.internet.email())
+    Helper.populateField(sut, 'email', faker.internet.email())
     Helper.validateStatusForField(sut, 'email', validationSpy.errorMessage)
   })
   test('should show password error if Validation fails', () => {
@@ -105,23 +100,23 @@ describe('Login Component', () => {
       sut,
       validationSpy
     } = makeSut(faker.random.words())
-    populateField(sut, 'password', faker.internet.password())
+    Helper.populateField(sut, 'password', faker.internet.password())
     Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
   test('should show email valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
-    populateField(sut, 'email', faker.internet.email())
+    Helper.populateField(sut, 'email', faker.internet.email())
     Helper.validateStatusForField(sut, 'email')
   })
   test('should show password valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
-    populateField(sut, 'password', faker.internet.password())
+    Helper.populateField(sut, 'password', faker.internet.password())
     Helper.validateStatusForField(sut, 'password')
   })
   test('should enable submit button if Validation succeeds', () => {
     const { sut } = makeSut()
-    populateField(sut, 'email', faker.internet.email())
-    populateField(sut, 'password', faker.internet.password())
+    Helper.populateField(sut, 'email', faker.internet.email())
+    Helper.populateField(sut, 'password', faker.internet.password())
     Helper.validateButtonState(sut, 'submit', false)
   })
   test('should show spinner on submit', async () => {
