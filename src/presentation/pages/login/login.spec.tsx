@@ -4,8 +4,14 @@ import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-libr
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { Login } from '@/presentation/pages'
-import { AuthenticationSpy, SaveAccessTokenMock, ValidationSpy } from '@/presentation/test'
+import {
+  AuthenticationSpy,
+  Helper,
+  SaveAccessTokenMock,
+  ValidationSpy
+} from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
+import { validateIfElementPropertyHasExpectedValue } from '@/presentation/test/form-helper'
 
 type SutTypes = {
   sut: RenderResult
@@ -48,22 +54,11 @@ const populateField = (sut: RenderResult, fieldTestId: string, value: string): v
   fireEvent.input(Input, { target: { value: value } })
 }
 
-const validateStatusForField = (sut: RenderResult, fieldName: string, validationError?: string): void => {
-  validateIfElementPropertyHasExpectedValue(sut, `${fieldName}-status`, 'title', validationError || 'Tudo certo!')
-  validateIfElementPropertyHasExpectedValue(sut, `${fieldName}-status`, 'textContent', validationError ? '🔴' : '🟢')
-}
 const validateIfElementExists = (sut: RenderResult, testId: string): void => {
   const element = sut.getByTestId(testId)
   expect(element).toBeTruthy()
 }
-const validateIfElementPropertyHasExpectedValue = (sut: RenderResult, testId: string, property: string, expectedValue: any): void => {
-  const element = sut.getByTestId(testId)
-  expect(element[property]).toBe(expectedValue)
-}
-const validateButtonState = (sut: RenderResult, testId: string, isDisabled: boolean): void => {
-  const element = sut.getByTestId(testId) as HTMLButtonElement
-  expect(element.disabled).toBe(isDisabled)
-}
+
 describe('Login Component', () => {
   afterEach(cleanup)
   test('should start with initial state', () => {
@@ -72,9 +67,9 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 0)
-    validateButtonState(sut, 'submit', true)
-    validateStatusForField(sut, 'email', validationSpy.errorMessage)
-    validateStatusForField(sut, 'password', validationSpy.errorMessage)
+    Helper.validateButtonState(sut, 'submit', true)
+    Helper.validateStatusForField(sut, 'email', validationSpy.errorMessage)
+    Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
 
   test('should call Email Validation with correct value', () => {
@@ -103,7 +98,7 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     populateField(sut, 'email', faker.internet.email())
-    validateStatusForField(sut, 'email', validationSpy.errorMessage)
+    Helper.validateStatusForField(sut, 'email', validationSpy.errorMessage)
   })
   test('should show password error if Validation fails', () => {
     const {
@@ -111,23 +106,23 @@ describe('Login Component', () => {
       validationSpy
     } = makeSut(faker.random.words())
     populateField(sut, 'password', faker.internet.password())
-    validateStatusForField(sut, 'password', validationSpy.errorMessage)
+    Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
   test('should show email valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'email', faker.internet.email())
-    validateStatusForField(sut, 'email')
+    Helper.validateStatusForField(sut, 'email')
   })
   test('should show password valid signal if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'password', faker.internet.password())
-    validateStatusForField(sut, 'password')
+    Helper.validateStatusForField(sut, 'password')
   })
   test('should enable submit button if Validation succeeds', () => {
     const { sut } = makeSut()
     populateField(sut, 'email', faker.internet.email())
     populateField(sut, 'password', faker.internet.password())
-    validateButtonState(sut, 'submit', false)
+    Helper.validateButtonState(sut, 'submit', false)
   })
   test('should show spinner on submit', async () => {
     const { sut } = makeSut()
