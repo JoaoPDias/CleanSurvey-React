@@ -29,7 +29,7 @@ describe('Signup Component', function () {
     Helper.validateButtonState(sut, 'submit', true)
     Helper.validateStatusForField(sut, 'name', validationError)
     Helper.validateStatusForField(sut, 'email', validationError)
-    Helper.validateStatusForField(sut, 'password', 'Campo obrigatório')
+    Helper.validateStatusForField(sut, 'password', validationError)
     Helper.validateStatusForField(sut, 'passwordConfirmation', 'Campo obrigatório')
   })
 
@@ -71,5 +71,25 @@ describe('Signup Component', function () {
     Helper.populateField(sut, 'email', email)
     expect(validationSpy.fieldName).toContain('email')
     expect(validationSpy.fieldValue).toContain(email)
+  })
+
+  test('should Signup Component calls Password Validation with correct value', () => {
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
+    const password = faker.internet.password()
+    Helper.populateField(sut, 'password', password)
+    expect(validationSpy.fieldName).toContain('password')
+    expect(validationSpy.fieldValue).toContain(password)
+  })
+
+  test('should Signup Component shows password error when Validation fails', () => {
+    const {
+      sut,
+      validationSpy
+    } = makeSut(faker.random.words())
+    Helper.populateField(sut, 'password', faker.internet.password())
+    Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
   })
 })
