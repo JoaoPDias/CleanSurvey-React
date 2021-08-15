@@ -130,4 +130,10 @@ describe('Signup Component', function () {
     Helper.populateField(sut, 'password', faker.internet.password())
     Helper.validateStatusForField(sut, 'password')
   })
+
+  test('should Signup Component shows passwordConfirmation valid signal when Validation succeeds', () => {
+    const { sut } = makeSut()
+    Helper.populateField(sut, 'passwordConfirmation', faker.internet.password())
+    Helper.validateStatusForField(sut, 'passwordConfirmation')
+  })
 })
