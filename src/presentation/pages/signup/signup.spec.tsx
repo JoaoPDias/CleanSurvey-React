@@ -21,6 +21,14 @@ const makeSut = (validationError?: string): SutTypes => {
 }
 
 describe('Signup Component', function () {
+  const fields = new Map()
+  beforeEach(() => {
+    const password = faker.internet.password()
+    fields.set('name', faker.name.findName())
+    fields.set('email', faker.internet.email())
+    fields.set('password', password)
+    fields.set('passwordConfirmation', password)
+  })
   afterEach(cleanup)
   test('should Signup Component renders with correct initial state', () => {
     const validationError = faker.random.words()
@@ -38,7 +46,7 @@ describe('Signup Component', function () {
       sut,
       validationSpy
     } = makeSut(faker.random.words())
-    Helper.populateField(sut, 'name', faker.internet.email())
+    Helper.populateField(sut, 'name', faker.name.findName())
     Helper.validateStatusForField(sut, 'name', validationSpy.errorMessage)
   })
 
@@ -135,5 +143,19 @@ describe('Signup Component', function () {
     const { sut } = makeSut()
     Helper.populateField(sut, 'passwordConfirmation', faker.internet.password())
     Helper.validateStatusForField(sut, 'passwordConfirmation')
+  })
+  test('should Signup Component enables submit button if Validation succeeds', () => {
+    const { sut } = makeSut()
+    Helper.populateField(sut, 'name', fields.get('name'))
+    Helper.populateField(sut, 'email', fields.get('name'))
+    Helper.populateField(sut, 'password', fields.get('name'))
+    Helper.populateField(sut, 'passwordConfirmation', fields.get('name'))
+    Helper.validateButtonState(sut, 'submit', false)
+  })
+
+  test('should Signup Component shows spinner on submit', async () => {
+    const { sut } = makeSut()
+    await Helper.simulateValidSubmit(sut, fields)
+    Helper.validateIfElementExists(sut, 'spinner')
   })
 })

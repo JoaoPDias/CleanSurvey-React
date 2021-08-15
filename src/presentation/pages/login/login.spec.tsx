@@ -1,17 +1,11 @@
 import React from 'react'
 import * as faker from 'faker'
-import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { Login } from '@/presentation/pages'
-import {
-  AuthenticationSpy,
-  Helper,
-  SaveAccessTokenMock,
-  ValidationSpy
-} from '@/presentation/test'
+import { AuthenticationSpy, Helper, SaveAccessTokenMock, ValidationSpy } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
-import { validateIfElementPropertyHasExpectedValue } from '@/presentation/test/form-helper'
 
 type SutTypes = {
   sut: RenderResult
@@ -19,6 +13,7 @@ type SutTypes = {
   authenticationSpy: AuthenticationSpy
   saveAccessTokenMock: SaveAccessTokenMock
 }
+
 const history = createMemoryHistory({ initialEntries: ['/login'] })
 const makeSut = (errorMessage: string = null): SutTypes => {
   const validationSpy = new ValidationSpy()
@@ -41,27 +36,19 @@ const makeSut = (errorMessage: string = null): SutTypes => {
   }
 }
 
-const simulateValidSubmit = async (sut: RenderResult, email: string = faker.internet.email(), password: string = faker.internet.password()): Promise<void> => {
-  Helper.populateField(sut, 'email', email)
-  Helper.populateField(sut, 'password', password)
-  const form = sut.getByTestId('form')
-  fireEvent.submit(form)
-  await waitFor(() => form)
-}
-
-const validateIfElementExists = (sut: RenderResult, testId: string): void => {
-  const element = sut.getByTestId(testId)
-  expect(element).toBeTruthy()
-}
-
 describe('Login Component', () => {
+  const fields = new Map()
+  beforeEach(() => {
+    fields.set('email', faker.internet.email())
+    fields.set('password', faker.internet.password())
+  })
   afterEach(cleanup)
   test('should start with initial state', () => {
     const {
       sut,
       validationSpy
     } = makeSut(faker.random.words())
-    validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 0)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 0)
     Helper.validateButtonState(sut, 'submit', true)
     Helper.validateStatusForField(sut, 'email', validationSpy.errorMessage)
     Helper.validateStatusForField(sut, 'password', validationSpy.errorMessage)
@@ -121,17 +108,17 @@ describe('Login Component', () => {
   })
   test('should show spinner on submit', async () => {
     const { sut } = makeSut()
-    await simulateValidSubmit(sut)
-    validateIfElementExists(sut, 'spinner')
+    await Helper.simulateValidSubmit(sut, fields)
+    Helper.validateIfElementExists(sut, 'spinner')
   })
   test('should call Authentication with correct values', async () => {
     const {
       sut,
       authenticationSpy
     } = makeSut()
-    const email = faker.internet.email()
-    const password = faker.internet.password()
-    await simulateValidSubmit(sut, email, password)
+    const email = fields.get('email')
+    const password = fields.get('password')
+    await Helper.simulateValidSubmit(sut, fields)
     expect(authenticationSpy.params).toEqual({
       email,
       password
@@ -143,8 +130,8 @@ describe('Login Component', () => {
       authenticationSpy
     } = makeSut()
     const spy = jest.spyOn(authenticationSpy, 'auth')
-    await simulateValidSubmit(sut)
-    await simulateValidSubmit(sut)
+    await Helper.simulateValidSubmit(sut, fields)
+    await Helper.simulateValidSubmit(sut, fields)
     expect(spy).toBeCalledTimes(1)
   })
 
@@ -154,7 +141,7 @@ describe('Login Component', () => {
       authenticationSpy
     } = makeSut(faker.random.words())
     const spy = jest.spyOn(authenticationSpy, 'auth')
-    await simulateValidSubmit(sut)
+    await Helper.simulateValidSubmit(sut, fields)
     expect(spy).toBeCalledTimes(0)
   })
 
@@ -165,9 +152,9 @@ describe('Login Component', () => {
     } = makeSut()
     const error = new InvalidCredentialsError()
     jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error))
-    await simulateValidSubmit(sut)
-    validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
-    validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
+    await Helper.simulateValidSubmit(sut, fields)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
   })
   test('should call SaveAccessToken when Authentication succeeds', async () => {
     const {
@@ -175,7 +162,7 @@ describe('Login Component', () => {
       authenticationSpy,
       saveAccessTokenMock
     } = makeSut()
-    await simulateValidSubmit(sut)
+    await Helper.simulateValidSubmit(sut, fields)
     expect(saveAccessTokenMock.accessToken).toBe(authenticationSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
@@ -187,9 +174,9 @@ describe('Login Component', () => {
     } = makeSut()
     const error = new InvalidCredentialsError()
     jest.spyOn(saveAccessTokenMock, 'save').mockReturnValueOnce(Promise.reject(error))
-    await simulateValidSubmit(sut)
-    validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
-    validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
+    await Helper.simulateValidSubmit(sut, fields)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'errorWrap', 'childElementCount', 1)
+    Helper.validateIfElementPropertyHasExpectedValue(sut, 'main-error', 'textContent', error.message)
   })
   test('should go to signup page', async () => {
     const {
