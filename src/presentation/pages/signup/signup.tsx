@@ -9,7 +9,10 @@ type Props = {
   validation: Validation
   addAccount: AddAccount
 }
-const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
+const Signup: React.FC<Props> = ({
+  validation,
+  addAccount
+}: Props) => {
   const [state, setState] = useState({
     isLoading: false,
     name: '',
@@ -36,7 +39,7 @@ const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-    if (state.isLoading) {
+    if (state.isLoading || state.nameError || state.emailError || state.passwordError || state.passwordConfirmationError) {
       return
     }
     setState({
