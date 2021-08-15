@@ -189,4 +189,15 @@ describe('Signup Component', function () {
       passwordConfirmation
     })
   })
+
+  test('should Signup Component calls AddAccount only once', async () => {
+    const {
+      sut,
+      addAccountSpy
+    } = makeSut()
+    const spy = jest.spyOn(addAccountSpy, 'add')
+    await Helper.simulateValidSubmit(sut, fields)
+    await Helper.simulateValidSubmit(sut, fields)
+    expect(spy).toBeCalledTimes(1)
+  })
 })
