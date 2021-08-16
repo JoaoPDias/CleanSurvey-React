@@ -107,7 +107,7 @@ describe('Signup Component', function () {
     const password = faker.internet.password()
     Helper.populateField(sut, 'password', password)
     expect(validationSpy.fieldName).toContain('password')
-    expect(validationSpy.fieldValue).toContain(password)
+    expect(validationSpy.fieldValue).toContainEqual(password)
   })
 
   test('should Signup Component show password error when Validation fails', () => {
