@@ -1,5 +1,5 @@
 import * as faker from 'faker'
-
+const baseUrl: string = Cypress.config().baseUrl
 describe('Login', function () {
   beforeEach(() => {
     cy.visit('login')
@@ -39,5 +39,16 @@ describe('Login', function () {
       .should('contain.text', '🟢')
     cy.getByTestId('submit').should('not.have.attr', 'disabled')
     cy.getByTestId('errorWrap').should('not.have.descendants')
+  })
+  it('should Login Page show error message when Credentials are invalid', () => {
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
+    cy.getByTestId('submit').click()
+    cy.getByTestId('errorWrap')
+      .getByTestId('spinner').should('exist')
+      .getByTestId('main-error').should('not.exist')
+      .getByTestId('spinner').should('not.exist')
+      .getByTestId('main-error').should('exist').should('contain.text', 'Credenciais inválidas')
+    cy.url().should('eq', `${baseUrl}/login`)
   })
 })
