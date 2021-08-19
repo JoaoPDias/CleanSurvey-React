@@ -10,7 +10,7 @@ export const validateButtonState = (sut: RenderResult, testId: string, isDisable
   expect(element.disabled).toBe(isDisabled)
 }
 export const validateStatusForField = (sut: RenderResult, fieldName: string, validationError?: string): void => {
-  validateIfElementPropertyHasExpectedValue(sut, `${fieldName}-status`, 'title', validationError || 'Tudo certo!')
+  validateIfElementPropertyHasExpectedValue(sut, `${fieldName}-status`, 'title', validationError || 'Tudo Certo!')
   validateIfElementPropertyHasExpectedValue(sut, `${fieldName}-status`, 'textContent', validationError ? '🔴' : '🟢')
 }
 
