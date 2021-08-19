@@ -20,4 +20,5 @@ sketch
 public
 *.scss
 **/src/main/test/cypress/*.js
+*.json
 # End of https://www.toptal.com/developers/gitignore/api/react
