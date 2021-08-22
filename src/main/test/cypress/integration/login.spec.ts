@@ -42,7 +42,7 @@ describe('Login', function () {
     cy.getByTestId('submit').should('not.have.attr', 'disabled')
     cy.getByTestId('errorWrap').should('not.have.descendants')
   })
-  it('should Login Page show error message when Credentials are invalid', () => {
+  it('should Login Page show InvalidCredentialsError message when Credentials are invalid', () => {
     cy.route({
       method: 'POST',
       url: /login/,
@@ -59,13 +59,33 @@ describe('Login', function () {
     cy.url().should('eq', `${baseUrl}/login`)
     cy.window().then(window => assert.isNull(window.localStorage.getItem('accessToken')))
   })
+  it('should Login Page show UnexpectedError message when Status code is between 402 and 500', () => {
+    cy.route({
+      method: 'POST',
+      url: /login/,
+      status: faker.datatype.number({
+        min: 402,
+        max: 500
+      }),
+      response: {
+        error: faker.random.words()
+      }
+    })
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
+    cy.getByTestId('submit').click()
+    cy.getByTestId('spinner').should('not.exist')
+    cy.getByTestId('main-error').should('exist').should('contain.text', 'Algo de errado aconteceu. Aguarde um momento para poder executar a funcionalidade')
+    cy.url().should('eq', `${baseUrl}/login`)
+    cy.window().then(window => assert.isNull(window.localStorage.getItem('accessToken')))
+  })
   it('should Login Page change to Main Page when Credentials are valid', () => {
     cy.route({
       method: 'POST',
       url: /login/,
       status: 200,
       response: {
-        xxx: faker.datatype.uuid()
+        accessToken: faker.datatype.uuid()
       }
     })
     cy.getByTestId('email').focus().type('ricardo@gmail.com')
@@ -75,5 +95,23 @@ describe('Login', function () {
     cy.getByTestId('spinner').should('not.exist')
     cy.url().should('eq', `${baseUrl}/`)
     cy.window().then(window => assert.isOk(window.localStorage.getItem('accessToken')))
+  })
+  it('should Login Page show UnexpectedError when accessToken was not returned', () => {
+    cy.route({
+      method: 'POST',
+      url: /login/,
+      status: 200,
+      response: {
+        invalidProperty: faker.datatype.uuid()
+      }
+    })
+    cy.getByTestId('email').focus().type('ricardo@gmail.com')
+    cy.getByTestId('password').focus().type('123456')
+    cy.getByTestId('submit').click()
+    cy.getByTestId('main-error').should('exist')
+    cy.getByTestId('spinner').should('not.exist')
+    cy.getByTestId('main-error').should('exist').should('contain.text', 'Algo de errado aconteceu. Aguarde um momento para poder executar a funcionalidade')
+    cy.url().should('eq', `${baseUrl}/login`)
+    cy.window().then(window => assert.isNull(window.localStorage.getItem('accessToken')))
   })
 })
