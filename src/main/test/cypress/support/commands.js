@@ -54,6 +54,17 @@ Cypress.Commands.add('mockUnexpectedError', (url, method) => {
     }
   })
 })
+Cypress.Commands.add('mockForbiddenError', (url, method) => {
+  cy.server()
+  cy.route({
+    method: method,
+    url: url,
+    status: 403,
+    response: {
+      error: faker.random.words()
+    }
+  })
+})
 Cypress.Commands.add('mockInvalidCredentialsError', (url, method) => {
   cy.server()
   cy.route({
@@ -85,4 +96,16 @@ Cypress.Commands.add('shouldLocalStorageItemExist', (key) => {
 
 Cypress.Commands.add('shouldLocalStorageItemNotExist', (key) => {
   cy.window().then(window => assert.isNull(window.localStorage.getItem(key)))
+})
+
+Cypress.Commands.add('signup', (name, email, password, passwordConfirmation) => {
+  cy.getByTestId('name').focus().type(name)
+  cy.getByTestId('email').focus().type(email)
+  cy.getByTestId('password').focus().type(password)
+  cy.getByTestId('passwordConfirmation').focus().type(passwordConfirmation)
+})
+
+Cypress.Commands.add('login', (email, password) => {
+  cy.getByTestId('email').focus().type(email)
+  cy.getByTestId('password').focus().type(password)
 })
