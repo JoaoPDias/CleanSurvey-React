@@ -33,6 +33,20 @@ describe('Signup', function () {
     cy.getByTestId('submit').should('have.attr', 'disabled')
     cy.getByTestId('errorWrap').should('not.have.descendants')
   })
+  it('should Signup Page show valid state when form is valid', () => {
+    const password = faker.random.alphaNumeric(15)
+    cy.getByTestId('name').focus().type(faker.name.findName())
+    cy.shouldInputStatusBeValid('name')
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.shouldInputStatusBeValid('email')
+    cy.getByTestId('password').focus().type(password)
+    cy.shouldInputStatusBeValid('password')
+    cy.getByTestId('passwordConfirmation').focus().type(password)
+    cy.shouldInputStatusBeValid('passwordConfirmation')
+
+    cy.getByTestId('submit').should('not.have.attr', 'disabled')
+    cy.getByTestId('errorWrap').should('not.have.descendants')
+  })
   it('should Signup Page show error when password and passwordConfirmation are different', () => {
     const password = faker.random.alphaNumeric(15)
     cy.getByTestId('name').focus().type(faker.name.findName())
