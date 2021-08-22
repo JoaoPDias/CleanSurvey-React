@@ -27,7 +27,7 @@ import faker from 'faker'
 
 Cypress.Commands.add('getByTestId', (id) => cy.get(`[data-testid=${id}]`))
 
-Cypress.Commands.add('validateErrorInputStatus', (field, error) => {
+Cypress.Commands.add('shouldInputStatusBeInvalid', (field, error) => {
   cy.getByTestId(field)
     .should('have.attr', 'title', error)
   cy.getByTestId(`${field}-label`)
@@ -35,7 +35,7 @@ Cypress.Commands.add('validateErrorInputStatus', (field, error) => {
   cy.getByTestId(`${field}-wrap`).should('have.attr', 'data-status', 'invalid')
 })
 
-Cypress.Commands.add('validateSuccessInputStatus', (field) => {
+Cypress.Commands.add('shouldInputStatusBeValid', (field) => {
   cy.getByTestId(`${field}-wrap`).should('have.attr', 'data-status', 'valid')
   cy.getByTestId(field)
     .should('not.have.attr', 'title')

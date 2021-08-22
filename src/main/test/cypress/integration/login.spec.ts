@@ -7,30 +7,30 @@ describe('Login', function () {
   })
   it('should Login Page load with correct initial state', () => {
     cy.getByTestId('email').should('have.attr', 'readonly')
-    cy.validateErrorInputStatus('email', 'Campo Obrigatório')
+    cy.shouldInputStatusBeInvalid('email', 'Campo Obrigatório')
 
     cy.getByTestId('password').should('have.attr', 'readonly')
-    cy.validateErrorInputStatus('password', 'Campo Obrigatório')
+    cy.shouldInputStatusBeInvalid('password', 'Campo Obrigatório')
 
     cy.getByTestId('submit').should('have.attr', 'disabled')
     cy.getByTestId('errorWrap').should('not.have.descendants')
   })
   it('should Login Page show error when form is invalid', () => {
     cy.getByTestId('email').focus().type(faker.random.words(3))
-    cy.validateErrorInputStatus('email', 'Valor Inválido')
+    cy.shouldInputStatusBeInvalid('email', 'Valor Inválido')
 
     cy.getByTestId('password').focus().type(faker.random.alphaNumeric(3))
-    cy.validateErrorInputStatus('password', 'Valor Inválido')
+    cy.shouldInputStatusBeInvalid('password', 'Valor Inválido')
 
     cy.getByTestId('submit').should('have.attr', 'disabled')
     cy.getByTestId('errorWrap').should('not.have.descendants')
   })
   it('should Login Page show valid message when form is valid', () => {
     cy.getByTestId('email').focus().type(faker.internet.email())
-    cy.validateSuccessInputStatus('email')
+    cy.shouldInputStatusBeValid('email')
 
     cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
-    cy.validateSuccessInputStatus('password')
+    cy.shouldInputStatusBeValid('password')
 
     cy.getByTestId('submit').should('not.have.attr', 'disabled')
     cy.getByTestId('errorWrap').should('not.have.descendants')
