@@ -6,6 +6,6 @@ export class CompareFieldsValidation implements FieldValidation {
   }
 
   validate (input: object): Error {
-    return input[this.field] !== input[this.fieldToCompare] ? new InvalidFieldError() : null
+    return input[this.field] !== input[this.fieldToCompare] ? new InvalidFieldError('Valor diferente do esperado.') : null
   }
 }
