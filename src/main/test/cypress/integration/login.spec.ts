@@ -88,8 +88,8 @@ describe('Login', function () {
         accessToken: faker.datatype.uuid()
       }
     })
-    cy.getByTestId('email').focus().type('ricardo@gmail.com')
-    cy.getByTestId('password').focus().type('123456')
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
     cy.getByTestId('submit').click()
     cy.getByTestId('main-error').should('not.exist')
     cy.getByTestId('spinner').should('not.exist')
@@ -105,8 +105,8 @@ describe('Login', function () {
         invalidProperty: faker.datatype.uuid()
       }
     })
-    cy.getByTestId('email').focus().type('ricardo@gmail.com')
-    cy.getByTestId('password').focus().type('123456')
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
     cy.getByTestId('submit').click()
     cy.getByTestId('main-error').should('exist')
     cy.getByTestId('spinner').should('not.exist')
