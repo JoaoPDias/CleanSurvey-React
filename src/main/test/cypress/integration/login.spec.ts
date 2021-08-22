@@ -114,7 +114,7 @@ describe('Login', function () {
     cy.url().should('eq', `${baseUrl}/login`)
     cy.window().then(window => assert.isNull(window.localStorage.getItem('accessToken')))
   })
-  it.only('should Login Page prevent multiple submits', () => {
+  it('should Login Page prevent multiple submits', () => {
     cy.route({
       method: 'POST',
       url: /login/,
@@ -127,5 +127,21 @@ describe('Login', function () {
     cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
     cy.getByTestId('submit').dblclick()
     cy.get('@loginRequest.all').should('have.length', 1)
+  })
+  it.only('should Login Page change to Main Page when Credentials are valid and enter was pressed', () => {
+    cy.route({
+      method: 'POST',
+      url: /login/,
+      status: 200,
+      response: {
+        accessToken: faker.datatype.uuid()
+      }
+    })
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5)).type('{enter}')
+    cy.getByTestId('main-error').should('not.exist')
+    cy.getByTestId('spinner').should('not.exist')
+    cy.url().should('eq', `${baseUrl}/`)
+    cy.window().then(window => assert.isOk(window.localStorage.getItem('accessToken')))
   })
 })
