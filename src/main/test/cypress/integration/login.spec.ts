@@ -128,7 +128,7 @@ describe('Login', function () {
     cy.getByTestId('submit').dblclick()
     cy.get('@loginRequest.all').should('have.length', 1)
   })
-  it.only('should Login Page change to Main Page when Credentials are valid and enter was pressed', () => {
+  it('should Login Page change to Main Page when Credentials are valid and enter was pressed', () => {
     cy.route({
       method: 'POST',
       url: /login/,
@@ -143,5 +143,17 @@ describe('Login', function () {
     cy.getByTestId('spinner').should('not.exist')
     cy.url().should('eq', `${baseUrl}/`)
     cy.window().then(window => assert.isOk(window.localStorage.getItem('accessToken')))
+  })
+  it.only('should Login Page prevent submit when form is invalid and user pressed Enter', () => {
+    cy.route({
+      method: 'POST',
+      url: /login/,
+      status: 200,
+      response: {
+        accessToken: faker.datatype.uuid()
+      }
+    }).as('loginRequest')
+    cy.getByTestId('email').focus().type(faker.internet.email()).type('{enter}')
+    cy.get('@loginRequest.all').should('have.length', 0)
   })
 })
